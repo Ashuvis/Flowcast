@@ -1,5 +1,5 @@
 import React from 'react'
-import { Spinner } from '@/components/ui/global/loader/spinner'
+import { Spinner } from '@/components/global/loader/spinner'
 
 type Props = {}
 

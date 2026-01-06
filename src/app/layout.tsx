@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import ReactQueryProvider from "@/react-query";
 
 const manrope=Manrope({
   subsets: ["latin"],
@@ -31,8 +32,11 @@ export default function RootLayout({
             attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
-          >{children}</ThemeProvider>
+            disableTransitionOnChange>
+              <ReactQueryProvider>
+            {children}
+              </ReactQueryProvider>
+              </ThemeProvider>
       </body>
     </html>
         </ClerkProvider>

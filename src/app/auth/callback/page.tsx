@@ -7,10 +7,13 @@ type Props = {}
 const page = async (props: Props) => {
   //authentication
     const authenticateUser = await onAuthenticateUser()
-    if (authenticateUser.status === '200' || authenticateUser.status === '201' ) {
-      return redirect(`/dashboard/${authenticateUser.user?.firstname }${authenticateUser.user?.lastname }`)
+    if (authenticateUser.status === 200 || authenticateUser.status === 201) {
+      const workspaceId = authenticateUser.user?.workspace?.[0]?.id
+      if (workspaceId) {
+        return redirect(`/dashboard/${workspaceId}`)
+      }
     }
-    if (authenticateUser.status === '404'|| authenticateUser.status === '400'|| authenticateUser.status === '500') {
+    if (authenticateUser.status === 400 || authenticateUser.status === 403 || authenticateUser.status === 500) {
       return redirect('/auth/signin')
     }
   return (
