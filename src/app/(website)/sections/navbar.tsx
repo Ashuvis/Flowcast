@@ -11,7 +11,7 @@ const Navbar = (props: Props) => {
     <div className='flex w-full justify-between items-center px-5'>
       <div className='text-2xl font-semibold flex items-center gap-x-3'>
         <Menu className='w-6 h-6'/>
-        <img src="/Flowcast.svg" alt="logo" width={30} height={30} />
+        <Image src="/Flowcast.svg" alt="logo" width={35} height={35} />
         Flowcast
       </div>
       <div className='hidden gap-x-10 items-center lg:flex'>

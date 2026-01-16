@@ -6,10 +6,9 @@ import { verifyAccessToWorkspace } from '@/actions/workspace'
 
 type Props = {
     params: { workspaceId: string }
-    children: React.ReactNode
 }
 
-const Page = async ({ params : {workspaceId},children}: Props) => {
+const Page = async ({ params: { workspaceId } }: Props) => {
     const auth= await onAuthenticateUser()
     if(!auth.user?.workspace) redirect('/auth/sign-in')
     if(!auth.user.workspace.length) redirect('/auth/sign-in')
