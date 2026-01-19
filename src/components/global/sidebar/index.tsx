@@ -8,6 +8,8 @@ import { getWorkspaces } from '@/actions/workspace'
 import { Separator } from '@/components/ui/separator copy'
 import { useQueryData } from '@/hooks/usequery'
 import { workspaceProps } from '@/types/index.type'
+import Modal from '@/components/global/Modal'
+import { PlusCircle } from 'lucide-react'
 
 type Props = {
     activeWorkspaceId: string
@@ -29,15 +31,7 @@ const {data:workspace}=data as workspaceProps
     queryFn: getWorkspaces,
   })
 
-  const workspaces = React.useMemo(() => {
-    const payload = workspacesResp?.data
-    if (!payload) return [] as { id: string; name: string }[]
-    const own = payload.workspace ?? []
-    const memberWs = payload.members?.map((m: any) => m.WorkSpace) ?? []
-    return [...own, ...memberWs]
-  }, [workspacesResp])
-
-
+console.log(activeWorkspaceId);
   return (
     <div className='bg-[#111111] flex-none relative p-4 h-full w-62.5 flex flex-col gap-4 items-center overflow-hidden'>
       <div className='bg-[#111111] p-4 flex gap-2 justify-center items-center mb-4 absolute top-0 left-0 right-0'>
@@ -51,22 +45,17 @@ const {data:workspace}=data as workspaceProps
         </SelectTrigger>
 
         <SelectContent className='bg-[#111111] backdrop-blur-xl'>
-          {isLoading ? (
-            <SelectItem value="" disabled>Loading...</SelectItem>
-          ) : workspaces.length > 0 ? (
-            workspaces.map((w: any) => (
-              <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>
-            ))
-          ) : (
-            <SelectItem value="" disabled>No workspaces</SelectItem>
-          )}
           <SelectGroup>
             <SelectLabel>Workspaces</SelectLabel>
             <Separator />
-            {workspace.workspace.map((workspace) => (<SelectItem key={workspace.id} value={workspace.id}>{workspace.name}</SelectItem>))}
+            {workspace.workspace.map((workspace) => 
+            (<SelectItem key={workspace.id} value={workspace.id}>{workspace.name}
+            </SelectItem>))}
+            {workspace.members.length >0 && workspace.members.map((workspace)=>workspace.workspace &&<SelectItem value={workspace.workspace.id} key={workspace.workspace.id}>{workspace.workspace.name}</SelectItem>)}
           </SelectGroup>
         </SelectContent>
       </Select>
+      <Modal trigger={<span className="text-white text-sm cursor-pointer flex items-center justify-center border-t-neutral-800/90 hover:bg-neutral-800/60 w-full rounded-sm p-1.25 gap-2 "> <PlusCircle size={15} className="text-neutral-800/90 fill-neutral-500" />Invite</span>} title='Invite in Workspace' ></Modal>
     </div>
   )
 }

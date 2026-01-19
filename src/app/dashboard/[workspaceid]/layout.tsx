@@ -11,7 +11,7 @@ import { getWorkspaces } from '@/actions/workspace'
 import { getNotifications } from '@/actions/user'
 import Sidebar from '@/components/global/sidebar'
 type Props = {
-    params: { workspaceId: string }
+    params: Promise<{ workspaceId: string }>
     children: React.ReactNode
 }
 
