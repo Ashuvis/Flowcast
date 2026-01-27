@@ -10,6 +10,7 @@ import { useQueryData } from '@/hooks/usequery'
 import { workspaceProps } from '@/types/index.type'
 import Modal from '@/components/global/Modal'
 import { PlusCircle } from 'lucide-react'
+import Search from '@/components/global/search-users'
 
 type Props = {
   activeWorkspaceId: string
@@ -25,7 +26,7 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
   const onChangeActiveWorkspace = (value: string) => {
     router.push(`/dashboard/${value}`);
   }
-
+  const currentWorkspace = workspace.workspace.find((ws) => ws.id === activeWorkspaceId)
   const { data: workspacesResp, isLoading } = useQuery({
     queryKey: ['user-workspaces'],
     queryFn: getWorkspaces,
@@ -55,9 +56,23 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <Modal trigger={<span className="text-white text-sm cursor-pointer flex items-center justify-center border-t-neutral-800/90 hover:bg-neutral-800/60 w-full rounded-sm p-1.25 gap-2 "> <PlusCircle size={15} className="text-neutral-800/90 fill-neutral-500" />Invite</span>} title='Invite in Workspace' description='Invite other user to your workspace'>
-              WorkspaceSearch
-      </Modal>
+      {currentWorkspace?.type === 'public' && workspace.subscription?.plan == 'pro' && (<Modal trigger={
+        <span className="text-white text-sm cursor-pointer flex items-center justify-center border-t-neutral-800/90 hover:bg-neutral-800/60 w-full rounded-sm p-1.25 gap-2 ">
+          <PlusCircle size={15} className="text-neutral-800/90 fill-neutral-500" />
+          Invite
+        </span>}
+        title='Invite in Workspace'
+        description='Invite other user to your workspace'>
+        WorkspaceSearch
+        <Search workspaceId={activeWorkspaceId} />
+      </Modal>)}
+
+      <p className='w-full text-[#9D9D9D]'>Menu</p>
+      <nav className="w-full">
+        <ul>
+          
+        </ul>
+      </nav>
     </div>
   )
 }

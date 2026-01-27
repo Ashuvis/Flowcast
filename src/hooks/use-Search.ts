@@ -1,13 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { use, useEffect, useState } from "react";
+import type React from "react"
+import { useEffect, useState } from "react";
 import { useQueryData } from "./usequery"
-import { searchUsers } from "@/actions/user";
 
 export const useSearch = (key: string, type: "USERS") => {
 
     const [query, setQuery] = useState("")
     const [debounce, setDebounce] = useState("")
-    const [onUsers, setonUsers] = useState<{ id: string, subscription: { plan: "PRO" | "FREE" } | null,
+    const [onUsers, setonUsers] = useState<{
+      firstName: ReactNode;
+      lastName: ReactNode; id: string, subscription: { plan: "PRO" | "FREE" } | null,
      firstname: string|null ,
      lastname: string|null,
      image: string|null,
@@ -19,25 +20,47 @@ export const useSearch = (key: string, type: "USERS") => {
     }
 
     useEffect(() => {
-        const delayInputTimeoutId = setTimeout(() => {setDebounce(query)},1000) 
-       
+        const delayInputTimeoutId = setTimeout(() => { setDebounce(query) }, 1000)
+
         return () => clearTimeout(delayInputTimeoutId)
-    },[query])
-    const {refetch,isFetching}=useQueryData(
-        [key, debounce], async ({queryKey}) => {
-            if(type==="USERS"){
-                const users = await searchUsers(queryKey[1] as string)
-                if(users.status===200){
-                    setonUsers(users.data)
+    }, [query])
+
+    const { refetch, isFetching } = useQueryData(
+        [key, debounce],
+        async ({ queryKey }) => {
+            if (type === "USERS") {
+                const searchTerm = queryKey[1] as string
+                if (!searchTerm) {
+                    setonUsers(undefined)
+                    return
+                }
+
+                const res = await fetch(`/api/search-users?q=${encodeURIComponent(searchTerm)}`, {
+                    method: 'GET',
+                    cache: 'no-store',
+                })
+
+                if (!res.ok) {
+                    setonUsers(undefined)
+                    return
+                }
+
+                const payload = await res.json()
+                if (payload?.data) {
+                    setonUsers(payload.data)
+                } else {
+                    setonUsers(undefined)
                 }
             }
-        },false
+        },
+        false
     )
 
     useEffect(() => {
         if (debounce) refetch()
-            if(!debounce) setonUsers(undefined)
-                return () => {debounce}
-    },[debounce]);
-    return { onSearchQuery, onUsers, isFetching,query  }
+        if (!debounce) setonUsers(undefined)
+        return () => { debounce }
+    }, [debounce, refetch])
+
+    return { onSearchQuery, onUsers, isFetching, query }
 };
