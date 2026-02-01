@@ -2,15 +2,18 @@
 import React from 'react'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup, SelectLabel } from '@/components/ui/select'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { getWorkspaces } from '@/actions/workspace'
 import { Separator } from '@/components/ui/separator copy'
 import { useQueryData } from '@/hooks/usequery'
-import { workspaceProps } from '@/types/index.type'
+import { NotificationProps, workspaceProps } from '@/types/index.type'
 import Modal from '@/components/global/Modal'
 import { PlusCircle } from 'lucide-react'
 import Search from '@/components/global/search-users'
+import { MENU_ITEMS } from '@/constants'
+import SidebarItem from './sidebar-item'
+import { getNotifications } from '@/actions/user'
 
 type Props = {
   activeWorkspaceId: string
@@ -18,10 +21,15 @@ type Props = {
 
 const Sidebar = ({ activeWorkspaceId }: Props) => {
   const router = useRouter();
+  const pathName= usePathname();
 
   const { data, isFetched } = useQueryData(["user-workspaces"], getWorkspaces)
+  const menuItems = MENU_ITEMS(activeWorkspaceId)
+
+  const {data: notifications} = useQueryData(["user-notifications"],getNotifications)
 
   const { data: workspace } = data as workspaceProps
+  const {data: count} = notifications as NotificationProps
 
   const onChangeActiveWorkspace = (value: string) => {
     router.push(`/dashboard/${value}`);
@@ -32,7 +40,6 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
     queryFn: getWorkspaces,
   })
 
-  console.log(activeWorkspaceId);
   return (
     <div className='bg-[#111111] flex-none relative p-4 h-full w-62.5 flex flex-col gap-4 items-center overflow-hidden'>
       <div className='bg-[#111111] p-4 flex gap-2 justify-center items-center mb-4 absolute top-0 left-0 right-0'>
@@ -70,10 +77,10 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
       <p className='w-full text-[#9D9D9D]'>Menu</p>
       <nav className="w-full">
         <ul>
-          
+          {menuItems.map((item) => (<SidebarItem href={item.href} icon={item.icon} title={item.title} selected={pathName===item.href} key={item.title} notifications={(item.title ==="Notifications" && count._count && count._count.notification) || 0} />))}
         </ul>
       </nav>
     </div>
-  )
-}
-export default Sidebar
+  );
+};
+export default Sidebar;
