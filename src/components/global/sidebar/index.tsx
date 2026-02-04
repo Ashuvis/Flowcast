@@ -80,6 +80,13 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
           {menuItems.map((item) => (<SidebarItem href={item.href} icon={item.icon} title={item.title} selected={pathName===item.href} key={item.title} notifications={(item.title ==="Notifications" && count._count && count._count.notification) || 0} />))}
         </ul>
       </nav>
+      <Separator className='w-4/5'/>
+      <p className='w-full text-[#9D9D9D] font-bold mt-4' > Workspaces</p>
+      <nav className='w-full'>
+        <ul className='h-37.5 overflow-auto overflow-x-hidden fade-layer'>
+          {workspace.workspace.length > 1 && workspace.workspace.map((item) => <SidebarItem href={`/dashboard/${item.id}`} title={item.name} selected={pathName===`/dashboard/${item.id}`} key={item.id} icon={} />)}
+        </ul>
+      </nav>
     </div>
   );
 };
