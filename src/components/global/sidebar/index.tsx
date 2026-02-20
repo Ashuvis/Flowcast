@@ -9,11 +9,16 @@ import { Separator } from '@/components/ui/separator copy'
 import { useQueryData } from '@/hooks/usequery'
 import { NotificationProps, workspaceProps } from '@/types/index.type'
 import Modal from '@/components/global/Modal'
-import { PlusCircle } from 'lucide-react'
+import { Menu, PlusCircle } from 'lucide-react'
 import Search from '@/components/global/search-users'
 import { MENU_ITEMS } from '@/constants'
 import SidebarItem from './sidebar-item'
 import { getNotifications } from '@/actions/user'
+import WorkspacePlaceholder from './workspaceplaceholder'
+import GlobalCard from '../global-card'
+import { Button, } from '@/components/ui/button'
+import Loader from '../loader'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 
 type Props = {
   activeWorkspaceId: string
@@ -31,6 +36,9 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
   const { data: workspace } = data as workspaceProps
   const {data: count} = notifications as NotificationProps
 
+  const plan = workspace.subscription?.plan?.toLowerCase()
+  const isFreePlan = !plan || plan === 'free'
+
   const onChangeActiveWorkspace = (value: string) => {
     router.push(`/dashboard/${value}`);
   }
@@ -40,8 +48,8 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
     queryFn: getWorkspaces,
   })
 
-  return (
-    <div className='bg-[#111111] flex-none relative p-4 h-full w-62.5 flex flex-col gap-4 items-center overflow-hidden'>
+  const SidebarSection =(
+    <div className='bg-[#111111] flex-none relative p-4 h-full w-62.5 flex flex-col gap-4 items-center overflow-y-auto min-h-0'>
       <div className='bg-[#111111] p-4 flex gap-2 justify-center items-center mb-4 absolute top-0 left-0 right-0'>
         <Image src="/Flowcast.svg" alt="Logo" width={32} height={32} />
         <p className='text-2xl font-bold text-white'>Flowcast</p>
@@ -82,12 +90,54 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
       </nav>
       <Separator className='w-4/5'/>
       <p className='w-full text-[#9D9D9D] font-bold mt-4' > Workspaces</p>
+        {workspace.workspace.length === 1 && workspace.members.length === 0 && ( 
+            <div className='w-full -mt-2.5'>
+              <p className='text-[#9d9d9d] font-medium text-sm '>
+                {workspace.subscription?.plan === 'free' ? 'upgrade to join workspaces' : 'Create or join more workspaces to collaborate.'}
+              </p>
+            </div>
+            )}
       <nav className='w-full'>
-        <ul className='h-37.5 overflow-auto overflow-x-hidden fade-layer'>
-          {workspace.workspace.length > 1 && workspace.workspace.map((item) => <SidebarItem href={`/dashboard/${item.id}`} title={item.name} selected={pathName===`/dashboard/${item.id}`} key={item.id} icon={} />)}
+        <ul className='h-35 overflow-auto overflow-x-hidden fade-layer'>
+          {workspace.workspace.length > 0 && workspace.workspace.map((item) => item.type !=='personal' && (<SidebarItem href={`/dashboard/${item.id}`} title={item.name} selected={pathName===`/dashboard/${item.id}`} key={item.name} icon={<WorkspacePlaceholder>{item.name.charAt(0)}</WorkspacePlaceholder>} notifications={0} />))}
+          {
+            workspace.members.length > 0 && workspace.members.map((item) =>(<SidebarItem href={`/dashboard/${item.workspace.id}`} title={item.workspace.name} selected={pathName===`/dashboard/${item.workspace.id}`} key={item.workspace.name} icon={<WorkspacePlaceholder>{item.workspace.name.charAt(0)}</WorkspacePlaceholder>} notifications={0} />))
+          }
         </ul>
       </nav>
+      <Separator className='w-4/5'/>
+      {isFreePlan && (
+        <div className='-mt-4 w-full'>
+          <GlobalCard title='Upgrade To Pro' description='Unlock AI features like transcription, AI summary, and many more...'>
+            <Button className='text-sm w-full bg-[#9d9d9d] hover:bg-[#9d9d9d]/70'>
+              <Loader state={false}>Upgrade</Loader>
+            </Button>
+          </GlobalCard>
+        </div>
+      )}
     </div>
-  );
+  )
+  return <div className='full'>
+    </InfoBar>
+    {/* {Sheet mobile and desktop} */}
+    <div className='md:hidden fixed my-4 '>
+      <Sheet>
+        <SheetTrigger asChild className='ml-2'>
+          <Button variant={"ghost"} className='mt-0.5 '>
+            <Menu />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side={"left"} className='p-0 w-fit h-full'>
+          <SheetHeader className='sr-only'>
+            <SheetTitle>Sidebar navigation</SheetTitle>
+          </SheetHeader>
+          {SidebarSection}
+        </SheetContent>
+      </Sheet>
+    </div>
+    <div className='md:block hidden h-full '>
+      {SidebarSection}
+    </div>
+  </div>
 };
 export default Sidebar;
