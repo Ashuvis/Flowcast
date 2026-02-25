@@ -19,6 +19,7 @@ import GlobalCard from '../global-card'
 import { Button, } from '@/components/ui/button'
 import Loader from '../loader'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import InfoBar from '../infobar'
 
 type Props = {
   activeWorkspaceId: string
@@ -118,7 +119,7 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
     </div>
   )
   return <div className='full'>
-    </InfoBar>
+    <InfoBar />
     {/* {Sheet mobile and desktop} */}
     <div className='md:hidden fixed my-4 '>
       <Sheet>
@@ -139,5 +140,6 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
       {SidebarSection}
     </div>
   </div>
+  
 };
 export default Sidebar;
