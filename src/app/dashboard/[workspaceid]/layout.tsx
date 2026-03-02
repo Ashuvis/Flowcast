@@ -10,6 +10,7 @@ import { getAllUserVideos } from '@/actions/workspace'
 import { getWorkspaces } from '@/actions/workspace'
 import { getNotifications } from '@/actions/user'
 import Sidebar from '@/components/global/sidebar'
+import GlobalHeader from '@/components/global/global-header'
 type Props = {
     params: Promise<{ workspaceId: string }>
     children: React.ReactNode
@@ -55,9 +56,12 @@ const Layout = async ({ params,children}: Props) => {
     <HydrationBoundary state={dehydrate(query)}>
       <div className='flex h-screen w-screen'>
         <Sidebar activeWorkspaceId={workspaceId} />
-         <main className="flex-1 overflow-y-auto bg-[#171717]">
-        {children}
-      </main>
+        <div className='w-full pt-28 p-6 overflow-y-scroll overflow-x-hidden'>
+        <GlobalHeader workspace={hasAccess.data.workspace}/>
+          <div className='mt-4'>
+            {children}
+          </div>
+        </div>
       </div>
     </HydrationBoundary>
   )

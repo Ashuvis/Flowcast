@@ -1,6 +1,7 @@
 import VideoRecorderIcon from '@/components/Icons/video-recorder'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { UserButton } from '@clerk/nextjs'
 import { Search, UploadIcon } from 'lucide-react'
 import React from 'react'
 
@@ -24,6 +25,7 @@ const InfoBar = (props: Props) => {
           <VideoRecorderIcon/>
           <span className='flex items-center gap-2'>Record</span>
         </Button>
+        <UserButton />
       </div>
     </header>
   )
