@@ -1,24 +1,27 @@
-import { on } from 'events'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import CreateWorkspace from '@/components/global/create-workspace'
 import React from 'react'
-import { onAuthenticateUser } from '@/actions/user'
-import { redirect } from 'next/navigation'
-import { verifyAccessToWorkspace } from '@/actions/workspace'
 
 type Props = {
-    params: Promise<{ workspaceId: string }>
+  params:{ workspaceId: string}
 }
 
-const Page = async ({ params }: Props) => {
-    const { workspaceId } = await params;
-    const auth= await onAuthenticateUser()
-    if(!auth.user?.workspace) redirect('/auth/sign-in')
-    if(!auth.user.workspace.length) redirect('/auth/sign-in')
-      const hasAccess = await verifyAccessToWorkspace( workspaceId)
-
-
+const page = ({params}: Props) => {
   return (
-    <div>page</div>
+    <div>
+      <Tabs defaultValue='Videos' className='mt-6'>
+        <div className='flex w-full justify-center items-center'>
+          <TabsList className='bg-transparent gap-2 pl-0'>
+            <TabsTrigger className='p-3.25 px-6 rounded-full data-[state=active]:bg-[#252525]' value='Videos'> Videos </TabsTrigger>
+            <TabsTrigger value='Archive' className='p-3.25 px-6 rounded-full data-[state=active]:bg-[#252525]'>Archive</TabsTrigger>
+          </TabsList>
+          <div className='flex gap-x-3'>
+            <CreateWorkspace/>
+          </div>
+        </div>
+      </Tabs>
+    </div>
   )
 }
 
-export default Page
+export default page
