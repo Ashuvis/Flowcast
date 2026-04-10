@@ -1,6 +1,10 @@
-import React from 'react'
+'use client' 
+import React, { use } from 'react'
 import { useQueryData } from '@/hooks/usequery'
 import { getWorkspaces } from '@/actions/workspace'
+import Modal from '../Modal'
+import FolderPlusDuotone from '@/components/Icons/folder-plus-duotone'
+import Workspaceform from '@/components/forms/workspace-form'
 type Props = {}
 
 const CreateWorkspace = (props: Props) => {
@@ -15,11 +19,13 @@ const CreateWorkspace = (props: Props) => {
         }
       }
 
+return(
+<Modal title="Create a workspace" description="Create a new workspace for your team." trigger={<button> <FolderPlusDuotone /> Create Workspace </button>}> <Workspaceform/></Modal>
 
-      
-  return (
-    <div>CreateWorkspace</div>
-  )
+)
+  
+
+ 
 }
 
 export default CreateWorkspace

@@ -3,6 +3,7 @@
 import { currentUser } from "@clerk/nextjs/server"
 import { db } from "@/lib/prisma"
 import { ca } from "date-fns/locale"
+import { SUBSCRIPTION_PLAN,Type} from "@prisma/client"
 
 
 export const verifyAccessToWorkspace = async (workspaceId: string) => {
@@ -147,4 +148,37 @@ export const getWorkspaces = async () => {
     catch (error) {
         return { status: 400 }
     }
+}
+
+export const CreateWorkspace = async (name:string)=> {
+  try {
+    const user = await currentUser()
+    if (!user) return { status: 404 }
+    const authorized= await db.user.findUnique({
+        where:{
+            clerkid:user.id,},
+            select:{
+                subscription:{
+                    select:{
+                        plan:true,
+                    }
+                }
+            }
+    })
+
+    if(authorized?.subscription?.plan === SUBSCRIPTION_PLAN.PRO){
+        const newWorkspace = await db.user.update({
+            where: { clerkid: user.id },
+            data: { workspace: { create: { name,type: 'PUBLIC' } } }
+        });
+
+        if(newWorkspace) {
+            return { status: 201, data:"workspace created" }
+        }
+    }
+     return { status: 401, data:"upgrade to pro to create more workspaces" }
+
+  } catch (error) {
+    return { status: 400, data:"an error occurred while creating workspace" }
+  }
 }

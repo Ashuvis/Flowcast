@@ -5,7 +5,11 @@ type Props = {}
 
 const Signup = (props: Props) => {
   return (
-    <SignUp />
+    <SignUp
+      routing="path"
+      path="/auth/sign-up"
+      signInUrl="/auth/sign-in"
+    />
   )
 }
 
